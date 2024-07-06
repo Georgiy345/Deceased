@@ -1,14 +1,30 @@
 package com.practice.deceased.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.practice.deceased.database.DList;
+import com.practice.deceased.service.DeceasedService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/deceased")
 public class MainController {
-    @GetMapping("/")
-    public String mainpage(Model model) {
-        model.addAttribute("title", "Главная страница");
-        return "mainpage";
+    @Autowired
+    private DeceasedService service;
+
+    @GetMapping
+    public List<DList> getAllDeceasedCitizens() {
+        return service.getAllDeceasedCitizens();
+    }
+
+    @PostMapping
+    public DList createDeceasedCitizen(@RequestBody DList deceasedCitizen) {
+        return service.saveDeceasedCitizen(deceasedCitizen);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteDeceasedCitizen(@PathVariable Long id) {
+        service.deleteDeceasedCitizen(id);
     }
 }

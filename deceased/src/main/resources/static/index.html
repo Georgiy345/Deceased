@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="mainpage.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Death List</title>
+</head>
+<body>
+    <form id="deceasedForm" class="mt-3">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="ZAGS_NAME">Наименование подразделения управления ЗАГС</label>
+                <input type="text" class="form-control" id="ZAGS_NAME">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="FAMR">Фамилия</label>
+                <input type="text" class="form-control" id="FAMR">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="NAMER">Имя</label>
+                <input type="text" class="form-control" id="NAMER">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="OTCHR">Имя</label>
+                <input type="text" class="form-control" id="OTCHR">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="DATARO">Имя</label>
+                <input type="text" class="form-control" id="DATARO">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="DATAR">Имя</label>
+                <input type="text" class="form-control" id="DATAR">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="COUNTRYH">Имя</label>
+                <input type="text" class="form-control" id="COUNTRYH">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="STATED">Имя</label>
+                <input type="text" class="form-control" id="STATED">
+            </div>
+        </div>
+        <div class="form-row">
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+        <button class="btn btn-primary">Изменить</button>
+        <button class="btn btn-primary">Удалить</button>
+    </form>
+<div class="table-container">
+    <table class="table mt-5">
+        <thead>
+        <tr>
+            <th>Наименование подразделения управления ЗАГС</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Дата рождения</th>
+            <th>Дата смерти</th>
+            <th>Страна адреса места жительства(регистрации)</th>
+            <th>Область адреса места жительства(регистрации)</th>
+            <th>Район адреса места жительства(регистрации)</th>
+            <th>Город адреса места жительства(регистрации)</th>
+            <th>Населенный пункт адреса места жительства(регистрации)</th>
+            <th>Улица адреса места жительства(регистрации)</th>
+            <th>Номер дома адреса места жительства(регистрации)</th>
+            <th>Корпус дома адреса места жительства(регистрации)</th>
+            <th>Квартира адреса места жительства(регистрации)</th>
+            <th>Номер актовой записи</th>
+            <th>Дата регистрации смерти</th>
+            <th>Место рождения</th>
+            <th>Место смерти</th>
+            <th>Пол (M - 1/ Ж -2)</th>
+            <th>Гражданство</th>
+            <th>Полное наименове адреса места жительства(регистрации)</th>
+        </tr>
+        </thead>
+        <tbody id="deceasedTableBody">
+        </tbody>
+    </table>
+</div>
+<script>
+    document.getElementById('deceasedForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const deceasedCitizen = {
+            ZAGS_NAME: document.getElementById('ZAGS_NAME').value,
+            FAMR: document.getElementById('FAMR').value,
+            NAMER: document.getElementById('namer').value,
+            OTCHR: document.getElementById('OTCHR').value,
+            DATARO: document.getElementById('DATARO').value,
+            DATAR: document.getElementById('DATAR').value,
+            COUNTRYH: document.getElementById('COUNTRYH').value,
+            STATED: document.getElementById('STATED').value,
+            DEPD: document.getElementById('DEPD').value,
+            TOWND: document.getElementById('TOWND').value,
+            MESTHML: document.getElementById('MESTHML').value,
+            NAMEU: document.getElementById('NAMEU').value,
+            NUMH: document.getElementById('NUMH').value,
+            NUMK: document.getElementById('NUMK').value,
+            NUMF: document.getElementById('NUMF').value,
+            NOMAKT: document.getElementById('NOMAKT').value,
+            DATREG: document.getElementById('DATREG').value,
+            BIRTH_PLACE: document.getElementById('BIRTH_PLACE').value,
+            DEATH_PLACE: document.getElementById('DEATH_PLACE').value,
+            POL: document.getElementById('POL').value,
+            CITIZEN: document.getElementById('CITIZEN').value,
+            POSLMZ: document.getElementById('POSLMZ').value,
+        };
+
+        fetch('/api/deceased', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(deceasedCitizen)
+        }).then(response => response.json()).then(data => {
+            const tableBody = document.getElementById('deceasedTableBody');
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `<td>${data.ZAGS_NAME}</td><td>${data.FAMR}</td><td>${data.NAMER}</td><td>${data.OTCHR}</td><td>${data.DATARO}</td><td>${data.DATAR}</td><td>${data.COUNTRYH}</td><td>${data.STATED}</td><td>${data.DEPD}</td><td>${data.TOWND}</td><td>${data.MESTHML}</td><td>${data.NAMEU}</td><td>${data.NUMH}</td><td>${data.NUMK}</td><td>${data.NUMF}</td><td>${data.NOMAKT}</td><td>${data.DATREG}</td><td>${data.BIRTH_PLACE}</td><td>${data.DEATH_PLACE}</td><td>${data.POL}</td><td>${data.CITIZEN}</td><td>${data.POSLMZ}</td>`;
+        });
+    });
+
+    function loadDeceasedCitizens() {
+        fetch('/api/deceased')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('deceasedTableBody');
+                tableBody.innerHTML = '';
+                data.forEach(deceasedCitizen => {
+                    const newRow = tableBody.insertRow();
+                    newRow.innerHTML = `<td>${deceasedCitizen.ZAGS_NAME}</td><td>${deceasedCitizen.FAMR}</td><td>${deceasedCitizen.NAMER}</td><td>${deceasedCitizen.OTCHR}</td><td>${deceasedCitizen.DATARO}</td><td>${deceasedCitizen.DATAR}</td><td>${deceasedCitizen.COUNTRYH}</td><td>${deceasedCitizen.STATED}</td><td>${deceasedCitizen.DEPD}</td><td>${deceasedCitizen.TOWND}</td><td>${deceasedCitizen.MESTHML}</td><td>${deceasedCitizen.NAMEU}</td><td>${deceasedCitizen.NUMH}</td><td>${deceasedCitizen.NUMK}</td><td>${deceasedCitizen.NUMF}</td><td>${deceasedCitizen.NOMAKT}</td><td>${deceasedCitizen.DATREG}</td><td>${deceasedCitizen.BIRTH_PLACE}</td><td>${deceasedCitizen.DEATH_PLACE}</td><td>${deceasedCitizen.POL}</td><td>${deceasedCitizen.CITIZEN}</td><td>${deceasedCitizen.POSLMZ}</td>`;
+                });
+            });
+    }
+    window.onload = loadDeceasedCitizens;
+</script>
+</body>
+</html>
