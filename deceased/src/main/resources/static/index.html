@@ -1,58 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="mainpage.css">
+    <title>ZAGS Deceased Citizens</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Death List</title>
 </head>
 <body>
-    <form id="deceasedForm" class="mt-3">
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="ZAGS_NAME">Наименование подразделения управления ЗАГС</label>
-                <input type="text" class="form-control" id="ZAGS_NAME">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="FAMR">Фамилия</label>
-                <input type="text" class="form-control" id="FAMR">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="NAMER">Имя</label>
-                <input type="text" class="form-control" id="NAMER">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="OTCHR">Имя</label>
-                <input type="text" class="form-control" id="OTCHR">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="DATARO">Имя</label>
-                <input type="text" class="form-control" id="DATARO">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="DATAR">Имя</label>
-                <input type="text" class="form-control" id="DATAR">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="COUNTRYH">Имя</label>
-                <input type="text" class="form-control" id="COUNTRYH">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="STATED">Имя</label>
-                <input type="text" class="form-control" id="STATED">
-            </div>
-        </div>
-        <div class="form-row">
-        </div>
-        <button type="submit" class="btn btn-primary">Добавить</button>
-        <button class="btn btn-primary">Изменить</button>
-        <button class="btn btn-primary">Удалить</button>
-    </form>
-<div class="table-container">
-    <table class="table mt-5">
+    <h1 class="mt-5">Учет данных об умерших гражданах</h1>
+    <table class="table mt-5" id="deceasedTable">
         <thead>
         <tr>
+            <th>Действия</th>
             <th>Наименование подразделения управления ЗАГС</th>
             <th>Фамилия</th>
             <th>Имя</th>
@@ -80,48 +38,49 @@
         <tbody id="deceasedTableBody">
         </tbody>
     </table>
-</div>
+    <button id="addBtn" class="btn btn-primary">Добавить</button>
+
 <script>
-    document.getElementById('deceasedForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    let selectedRow = null;
 
-        const deceasedCitizen = {
-            ZAGS_NAME: document.getElementById('ZAGS_NAME').value,
-            FAMR: document.getElementById('FAMR').value,
-            NAMER: document.getElementById('namer').value,
-            OTCHR: document.getElementById('OTCHR').value,
-            DATARO: document.getElementById('DATARO').value,
-            DATAR: document.getElementById('DATAR').value,
-            COUNTRYH: document.getElementById('COUNTRYH').value,
-            STATED: document.getElementById('STATED').value,
-            DEPD: document.getElementById('DEPD').value,
-            TOWND: document.getElementById('TOWND').value,
-            MESTHML: document.getElementById('MESTHML').value,
-            NAMEU: document.getElementById('NAMEU').value,
-            NUMH: document.getElementById('NUMH').value,
-            NUMK: document.getElementById('NUMK').value,
-            NUMF: document.getElementById('NUMF').value,
-            NOMAKT: document.getElementById('NOMAKT').value,
-            DATREG: document.getElementById('DATREG').value,
-            BIRTH_PLACE: document.getElementById('BIRTH_PLACE').value,
-            DEATH_PLACE: document.getElementById('DEATH_PLACE').value,
-            POL: document.getElementById('POL').value,
-            CITIZEN: document.getElementById('CITIZEN').value,
-            POSLMZ: document.getElementById('POSLMZ').value,
-        };
-
-        fetch('/api/deceased', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(deceasedCitizen)
-        }).then(response => response.json()).then(data => {
-            const tableBody = document.getElementById('deceasedTableBody');
-            const newRow = tableBody.insertRow();
-            newRow.innerHTML = `<td>${data.ZAGS_NAME}</td><td>${data.FAMR}</td><td>${data.NAMER}</td><td>${data.OTCHR}</td><td>${data.DATARO}</td><td>${data.DATAR}</td><td>${data.COUNTRYH}</td><td>${data.STATED}</td><td>${data.DEPD}</td><td>${data.TOWND}</td><td>${data.MESTHML}</td><td>${data.NAMEU}</td><td>${data.NUMH}</td><td>${data.NUMK}</td><td>${data.NUMF}</td><td>${data.NOMAKT}</td><td>${data.DATREG}</td><td>${data.BIRTH_PLACE}</td><td>${data.DEATH_PLACE}</td><td>${data.POL}</td><td>${data.CITIZEN}</td><td>${data.POSLMZ}</td>`;
-        });
+    document.getElementById('addBtn').addEventListener('click', function() {
+        addEmptyTableRow();
     });
+
+    function addEmptyTableRow() {
+        const tableBody = document.getElementById('deceasedTableBody');
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `<td>
+                                <button class="btn btn-sm btn-success save-btn">Сохранить</button>
+                                <button class="btn btn-sm btn-info edit-btn" style="display: none;">Изменить</button>
+                                <button class="btn btn-sm btn-danger delete-btn" style="display: none;">Удалить</button>
+                            </td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="date" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>`;
+        newRow.querySelector('.save-btn').addEventListener('click', function() {
+            saveNewDeceasedCitizen(newRow);
+        });
+    }
 
     function loadDeceasedCitizens() {
         fetch('/api/deceased')
@@ -130,11 +89,195 @@
                 const tableBody = document.getElementById('deceasedTableBody');
                 tableBody.innerHTML = '';
                 data.forEach(deceasedCitizen => {
-                    const newRow = tableBody.insertRow();
-                    newRow.innerHTML = `<td>${deceasedCitizen.ZAGS_NAME}</td><td>${deceasedCitizen.FAMR}</td><td>${deceasedCitizen.NAMER}</td><td>${deceasedCitizen.OTCHR}</td><td>${deceasedCitizen.DATARO}</td><td>${deceasedCitizen.DATAR}</td><td>${deceasedCitizen.COUNTRYH}</td><td>${deceasedCitizen.STATED}</td><td>${deceasedCitizen.DEPD}</td><td>${deceasedCitizen.TOWND}</td><td>${deceasedCitizen.MESTHML}</td><td>${deceasedCitizen.NAMEU}</td><td>${deceasedCitizen.NUMH}</td><td>${deceasedCitizen.NUMK}</td><td>${deceasedCitizen.NUMF}</td><td>${deceasedCitizen.NOMAKT}</td><td>${deceasedCitizen.DATREG}</td><td>${deceasedCitizen.BIRTH_PLACE}</td><td>${deceasedCitizen.DEATH_PLACE}</td><td>${deceasedCitizen.POL}</td><td>${deceasedCitizen.CITIZEN}</td><td>${deceasedCitizen.POSLMZ}</td>`;
+                    addTableRow(deceasedCitizen);
                 });
             });
     }
+
+    function addTableRow(deceasedCitizen) {
+        const tableBody = document.getElementById('deceasedTableBody');
+        const newRow = tableBody.insertRow();
+        newRow.dataset.id = deceasedCitizen.id;
+        newRow.innerHTML = `<td>
+                                <button class="btn btn-sm btn-info edit-btn">Изменить</button>
+                                <button class="btn btn-sm btn-danger delete-btn">Удалить</button>
+                            </td>
+                            <td>${deceasedCitizen.zagsName}</td><td>${deceasedCitizen.famr}</td><td>${deceasedCitizen.namer}</td>
+                            <td>${deceasedCitizen.otchr}</td><td>${deceasedCitizen.dataro}</td><td>${deceasedCitizen.datar}</td>
+                            <td>${deceasedCitizen.countryh}</td><td>${deceasedCitizen.stated}</td><td>${deceasedCitizen.depd}</td>
+                            <td>${deceasedCitizen.townd}</td><td>${deceasedCitizen.mesthml}</td><td>${deceasedCitizen.nameu}</td>
+                            <td>${deceasedCitizen.numh}</td><td>${deceasedCitizen.numk}</td><td>${deceasedCitizen.numf}</td>
+                            <td>${deceasedCitizen.nomakt}</td><td>${deceasedCitizen.datreg}</td><td>${deceasedCitizen.birthPlace}</td>
+                            <td>${deceasedCitizen.deathPlace}</td><td>${deceasedCitizen.pol}</td><td>${deceasedCitizen.citizen}</td><td>${deceasedCitizen.poslmz}</td>`;
+
+        newRow.addEventListener('click', function() {
+            if (selectedRow) {
+                selectedRow.classList.remove('table-active');
+            }
+            selectedRow = this;
+            selectedRow.classList.add('table-active');
+        });
+
+        newRow.querySelector('.delete-btn').addEventListener('click', function() {
+            deleteDeceasedCitizen(deceasedCitizen.id, newRow);
+        });
+
+        newRow.querySelector('.edit-btn').addEventListener('click', function() {
+            editDeceasedCitizen(deceasedCitizen, newRow);
+        });
+    }
+
+    function deleteDeceasedCitizen(id, row) {
+        fetch(`/api/deceased/${id}`, {
+            method: 'DELETE'
+        }).then(() => {
+            row.remove();
+        });
+    }
+
+    function editDeceasedCitizen(deceasedCitizen, row) {
+        row.innerHTML = `<td>
+                            <button class="btn btn-sm btn-success save-btn">Сохранить</button>
+                            <button class="btn btn-sm btn-info edit-btn" style="display: none;">Изменить</button>
+                            <button class="btn btn-sm btn-danger delete-btn" style="display: none;">Удалить</button>
+                        </td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.zagsName}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.famr}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.namer}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.otchr}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.dataro}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.datar}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.countryh}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.stated}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.depd}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.townd}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.mesthml}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.nameu}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.numh}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.numk}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.numf}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.nomakt}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.datreg}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.birthPlace}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.deathPlace}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.pol}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.citizen}"></td>
+                         <td><input type="text" class="form-control" value="${deceasedCitizen.poslmz}"></td>`;
+
+        row.querySelector('.save-btn').addEventListener('click', function() {
+            saveDeceasedCitizen(deceasedCitizen.id, row);
+        });
+    }
+
+    function saveNewDeceasedCitizen(row) {
+        const newDeceasedCitizen = {
+            zagsName: row.cells[1].querySelector('input').value,
+            famr: row.cells[2].querySelector('input').value,
+            namer: row.cells[3].querySelector('input').value,
+            otchr: row.cells[4].querySelector('input').value,
+            dataro: row.cells[5].querySelector('input').value,
+            datar: row.cells[6].querySelector('input').value,
+            countryh: row.cells[7].querySelector('input').value,
+            stated: row.cells[8].querySelector('input').value,
+            depd: row.cells[9].querySelector('input').value,
+            townd: row.cells[10].querySelector('input').value,
+            mesthml: row.cells[11].querySelector('input').value,
+            nameu: row.cells[12].querySelector('input').value,
+            numh: row.cells[13].querySelector('input').value,
+            numk: row.cells[14].querySelector('input').value,
+            numf: row.cells[15].querySelector('input').value,
+            nomakt: row.cells[16].querySelector('input').value,
+            datreg: row.cells[17].querySelector('input').value,
+            birthPlace: row.cells[18].querySelector('input').value,
+            deathPlace: row.cells[19].querySelector('input').value,
+            pol: row.cells[20].querySelector('input').value,
+            citizen: row.cells[21].querySelector('input').value,
+            poslmz: row.cells[22].querySelector('input').value,
+        };
+
+        fetch('/api/deceased', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newDeceasedCitizen)
+        }).then(response => response.json()).then(data => {
+            row.dataset.id = data.id;
+            row.innerHTML = `<td>
+                                <button class="btn btn-sm btn-info edit-btn">Изменить</button>
+                                <button class="btn btn-sm btn-danger delete-btn">Удалить</button>
+                             </td>
+                             <td>${data.zagsName}</td><td>${data.famr}</td><td>${data.namer}</td>
+                             <td>${data.otchr}</td><td>${data.dataro}</td><td>${data.datar}</td>
+                             <td>${data.countryh}</td><td>${data.stated}</td><td>${data.depd}</td>
+                             <td>${data.townd}</td><td>${data.mesthml}</td><td>${data.nameu}</td>
+                             <td>${data.numh}</td><td>${data.numk}</td><td>${data.numf}</td><td>${data.nomakt}</td>
+                             <td>${data.datreg}</td><td>${data.birthPlace}</td><td>${data.deathPlace}</td>
+                             <td>${data.pol}</td><td>${data.citizen}</td><td>${data.poslmz}</td>`;
+
+            row.querySelector('.delete-btn').addEventListener('click', function() {
+                deleteDeceasedCitizen(data.id, row);
+            });
+            row.querySelector('.edit-btn').addEventListener('click', function() {
+                editDeceasedCitizen(data, row);
+            });
+        });
+    }
+
+    function saveDeceasedCitizen(id, row) {
+        const updatedDeceasedCitizen = {
+            zagsName: row.cells[1].querySelector('input').value,
+            famr: row.cells[2].querySelector('input').value,
+            namer: row.cells[3].querySelector('input').value,
+            otchr: row.cells[4].querySelector('input').value,
+            dataro: row.cells[5].querySelector('input').value,
+            datar: row.cells[6].querySelector('input').value,
+            countryh: row.cells[7].querySelector('input').value,
+            stated: row.cells[8].querySelector('input').value,
+            depd: row.cells[9].querySelector('input').value,
+            townd: row.cells[10].querySelector('input').value,
+            mesthml: row.cells[11].querySelector('input').value,
+            nameu: row.cells[12].querySelector('input').value,
+            numh: row.cells[13].querySelector('input').value,
+            numk: row.cells[14].querySelector('input').value,
+            numf: row.cells[15].querySelector('input').value,
+            nomakt: row.cells[16].querySelector('input').value,
+            datreg: row.cells[17].querySelector('input').value,
+            birthPlace: row.cells[18].querySelector('input').value,
+            deathPlace: row.cells[19].querySelector('input').value,
+            pol: row.cells[20].querySelector('input').value,
+            citizen: row.cells[21].querySelector('input').value,
+            poslmz: row.cells[22].querySelector('input').value,
+        };
+
+        fetch(`/api/deceased/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedDeceasedCitizen)
+        }).then(response => response.json()).then(data => {
+            row.innerHTML = `<td>
+                                <button class="btn btn-sm btn-info edit-btn">Изменить</button>
+                                <button class="btn btn-sm btn-danger delete-btn">Удалить</button>
+                             </td>
+                             <td>${data.zagsName}</td><td>${data.famr}</td><td>${data.namer}</td>
+                             <td>${data.otchr}</td><td>${data.dataro}</td><td>${data.datar}</td>
+                             <td>${data.countryh}</td><td>${data.stated}</td><td>${data.depd}</td>
+                             <td>${data.townd}</td><td>${data.mesthml}</td><td>${data.nameu}</td>
+                             <td>${data.numh}</td><td>${data.numk}</td><td>${data.numf}</td><td>${data.nomakt}</td>
+                             <td>${data.datreg}</td><td>${data.birthPlace}</td><td>${data.deathPlace}</td>
+                             <td>${data.pol}</td><td>${data.citizen}</td><td>${data.poslmz}</td>`;
+
+            row.querySelector('.delete-btn').addEventListener('click', function() {
+                deleteDeceasedCitizen(data.id, row);
+            });
+            row.querySelector('.edit-btn').addEventListener('click', function() {
+                editDeceasedCitizen(data, row);
+            });
+        });
+    }
+
     window.onload = loadDeceasedCitizens;
 </script>
 </body>

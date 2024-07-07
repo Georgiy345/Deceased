@@ -1,4 +1,4 @@
-package com.practice.deceased.controllers;
+package com.practice.deceased.controller;
 
 import com.practice.deceased.database.DList;
 import com.practice.deceased.service.DeceasedService;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/deceased")
-public class MainController {
+public class DeceasedCitizenController {
     @Autowired
     private DeceasedService service;
 
@@ -21,6 +21,11 @@ public class MainController {
     @PostMapping
     public DList createDeceasedCitizen(@RequestBody DList deceasedCitizen) {
         return service.saveDeceasedCitizen(deceasedCitizen);
+    }
+
+    @PutMapping("/{id}")
+    public DList updateDeceasedCitizen(@PathVariable Long id, @RequestBody DList updatedDeceasedCitizen) {
+        return service.updateDeceasedCitizen(id, updatedDeceasedCitizen);
     }
 
     @DeleteMapping("/{id}")
