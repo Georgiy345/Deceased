@@ -4,44 +4,69 @@
     <meta charset="UTF-8">
     <title>ZAGS Deceased Citizens</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="mainpage.css">
 </head>
 <body>
-    <h1 class="mt-5">Учет данных об умерших гражданах</h1>
-    <table class="table mt-5" id="deceasedTable">
-        <thead>
-        <tr>
-            <th>Действия</th>
-            <th>Наименование подразделения управления ЗАГС</th>
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Дата рождения</th>
-            <th>Дата смерти</th>
-            <th>Страна адреса места жительства(регистрации)</th>
-            <th>Область адреса места жительства(регистрации)</th>
-            <th>Район адреса места жительства(регистрации)</th>
-            <th>Город адреса места жительства(регистрации)</th>
-            <th>Населенный пункт адреса места жительства(регистрации)</th>
-            <th>Улица адреса места жительства(регистрации)</th>
-            <th>Номер дома адреса места жительства(регистрации)</th>
-            <th>Корпус дома адреса места жительства(регистрации)</th>
-            <th>Квартира адреса места жительства(регистрации)</th>
-            <th>Номер актовой записи</th>
-            <th>Дата регистрации смерти</th>
-            <th>Место рождения</th>
-            <th>Место смерти</th>
-            <th>Пол (M - 1/ Ж -2)</th>
-            <th>Гражданство</th>
-            <th>Полное наименове адреса места жительства(регистрации)</th>
-        </tr>
-        </thead>
-        <tbody id="deceasedTableBody">
-        </tbody>
-    </table>
-    <button id="addBtn" class="btn btn-primary">Добавить</button>
+<h1 class="mt-5">Учет данных об умерших гражданах</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="fileInput">Загрузить Excel файл:</label>
+        <input type="file" class="form-control-file" id="fileInput" name="file">
+    </div>
+    <button type="submit" class="btn btn-primary">Загрузить</button>
+</form>
+<table class="table mt-5" id="deceasedTable">
+    <thead>
+    <tr>
+        <th>Действия</th>
+        <th>Наименование подразделения управления ЗАГС</th>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Дата рождения</th>
+        <th>Дата смерти</th>
+        <th>Страна адреса места жительства(регистрации)</th>
+        <th>Область адреса места жительства(регистрации)</th>
+        <th>Район адреса места жительства(регистрации)</th>
+        <th>Город адреса места жительства(регистрации)</th>
+        <th>Населенный пункт адреса места жительства(регистрации)</th>
+        <th>Улица адреса места жительства(регистрации)</th>
+        <th>Номер дома адреса места жительства(регистрации)</th>
+        <th>Корпус дома адреса места жительства(регистрации)</th>
+        <th>Квартира адреса места жительства(регистрации)</th>
+        <th>Номер актовой записи</th>
+        <th>Дата регистрации смерти</th>
+        <th>Место рождения</th>
+        <th>Место смерти</th>
+        <th class="multiline-header">Пол (M - 1/ Ж - 2)</th>
+        <th>Гражданство</th>
+        <th>Полное наименове адреса места жительства(регистрации)</th>
+    </tr>
+    </thead>
+    <tbody id="deceasedTableBody">
+    </tbody>
+</table>
+<button id="addBtn" class="btn btn-primary">Добавить</button>
 
 <script>
     let selectedRow = null;
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+        fetch('/api/deceased/upload', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                response.json().then(data => {
+                    data.forEach(deceasedCitizen => {
+                        addTableRow(deceasedCitizen);
+                    });
+                });
+            }
+        });
+    });
 
     document.getElementById('addBtn').addEventListener('click', function() {
         addEmptyTableRow();
@@ -59,8 +84,6 @@
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
-                            <td><input type="date" class="form-control"></td>
-                            <td><input type="date" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
@@ -71,7 +94,9 @@
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
-                            <td><input type="date" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
+                            <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
                             <td><input type="text" class="form-control"></td>
@@ -170,29 +195,30 @@
     }
 
     function saveNewDeceasedCitizen(row) {
+        const inputs = row.querySelectorAll('input');
         const newDeceasedCitizen = {
-            zagsName: row.cells[1].querySelector('input').value,
-            famr: row.cells[2].querySelector('input').value,
-            namer: row.cells[3].querySelector('input').value,
-            otchr: row.cells[4].querySelector('input').value,
-            dataro: row.cells[5].querySelector('input').value,
-            datar: row.cells[6].querySelector('input').value,
-            countryh: row.cells[7].querySelector('input').value,
-            stated: row.cells[8].querySelector('input').value,
-            depd: row.cells[9].querySelector('input').value,
-            townd: row.cells[10].querySelector('input').value,
-            mesthml: row.cells[11].querySelector('input').value,
-            nameu: row.cells[12].querySelector('input').value,
-            numh: row.cells[13].querySelector('input').value,
-            numk: row.cells[14].querySelector('input').value,
-            numf: row.cells[15].querySelector('input').value,
-            nomakt: row.cells[16].querySelector('input').value,
-            datreg: row.cells[17].querySelector('input').value,
-            birthPlace: row.cells[18].querySelector('input').value,
-            deathPlace: row.cells[19].querySelector('input').value,
-            pol: row.cells[20].querySelector('input').value,
-            citizen: row.cells[21].querySelector('input').value,
-            poslmz: row.cells[22].querySelector('input').value,
+            zagsName: inputs[0].value,
+            famr: inputs[1].value,
+            namer: inputs[2].value,
+            otchr: inputs[3].value,
+            dataro: inputs[4].value,
+            datar: inputs[5].value,
+            countryh: inputs[6].value,
+            stated: inputs[7].value,
+            depd: inputs[8].value,
+            townd: inputs[9].value,
+            mesthml: inputs[10].value,
+            nameu: inputs[11].value,
+            numh: inputs[12].value,
+            numk: inputs[13].value,
+            numf: inputs[14].value,
+            nomakt: inputs[15].value,
+            datreg: inputs[16].value,
+            birthPlace: inputs[17].value,
+            deathPlace: inputs[18].value,
+            pol: inputs[19].value,
+            citizen: inputs[20].value,
+            poslmz: inputs[21].value,
         };
 
         fetch('/api/deceased', {
@@ -225,29 +251,30 @@
     }
 
     function saveDeceasedCitizen(id, row) {
+        const inputs = row.querySelectorAll('input');
         const updatedDeceasedCitizen = {
-            zagsName: row.cells[1].querySelector('input').value,
-            famr: row.cells[2].querySelector('input').value,
-            namer: row.cells[3].querySelector('input').value,
-            otchr: row.cells[4].querySelector('input').value,
-            dataro: row.cells[5].querySelector('input').value,
-            datar: row.cells[6].querySelector('input').value,
-            countryh: row.cells[7].querySelector('input').value,
-            stated: row.cells[8].querySelector('input').value,
-            depd: row.cells[9].querySelector('input').value,
-            townd: row.cells[10].querySelector('input').value,
-            mesthml: row.cells[11].querySelector('input').value,
-            nameu: row.cells[12].querySelector('input').value,
-            numh: row.cells[13].querySelector('input').value,
-            numk: row.cells[14].querySelector('input').value,
-            numf: row.cells[15].querySelector('input').value,
-            nomakt: row.cells[16].querySelector('input').value,
-            datreg: row.cells[17].querySelector('input').value,
-            birthPlace: row.cells[18].querySelector('input').value,
-            deathPlace: row.cells[19].querySelector('input').value,
-            pol: row.cells[20].querySelector('input').value,
-            citizen: row.cells[21].querySelector('input').value,
-            poslmz: row.cells[22].querySelector('input').value,
+            zagsName: inputs[0].value,
+            famr: inputs[1].value,
+            namer: inputs[2].value,
+            otchr: inputs[3].value,
+            dataro: inputs[4].value,
+            datar: inputs[5].value,
+            countryh: inputs[6].value,
+            stated: inputs[7].value,
+            depd: inputs[8].value,
+            townd: inputs[9].value,
+            mesthml: inputs[10].value,
+            nameu: inputs[11].value,
+            numh: inputs[12].value,
+            numk: inputs[13].value,
+            numf: inputs[14].value,
+            nomakt: inputs[15].value,
+            datreg: inputs[16].value,
+            birthPlace: inputs[17].value,
+            deathPlace: inputs[18].value,
+            pol: inputs[19].value,
+            citizen: inputs[20].value,
+            poslmz: inputs[21].value,
         };
 
         fetch(`/api/deceased/${id}`, {

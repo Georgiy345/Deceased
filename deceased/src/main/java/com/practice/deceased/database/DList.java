@@ -1,7 +1,6 @@
 package com.practice.deceased.database;
 
 import jakarta.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "deceased_citizens")
@@ -15,8 +14,8 @@ public class DList {
     private String famr;
     private String namer;
     private String otchr;
-    private Date dataro;
-    private Date datar;
+    private String dataro;
+    private String datar;
     private String countryh;
     private String stated;
     private String depd;
@@ -27,10 +26,10 @@ public class DList {
     private String numk;
     private String numf;
     private String nomakt;
-    private Date datreg;
+    private String datreg;
     private String birthPlace;
     private String deathPlace;
-    private int pol;
+    private String pol;
     private String citizen;
     private String poslmz;
 
@@ -74,19 +73,19 @@ public class DList {
         this.otchr = otchr;
     }
 
-    public Date getDataro() {
+    public String getDataro() {
         return dataro;
     }
 
-    public void setDataro(Date dataro) {
+    public void setDataro(String dataro) {
         this.dataro = dataro;
     }
 
-    public Date getDatar() {
+    public String getDatar() {
         return datar;
     }
 
-    public void setDatar(Date datar) {
+    public void setDatar(String datar) {
         this.datar = datar;
     }
 
@@ -170,11 +169,11 @@ public class DList {
         this.nomakt = nomakt;
     }
 
-    public Date getDatreg() {
+    public String getDatreg() {
         return datreg;
     }
 
-    public void setDatreg(Date datreg) {
+    public void setDatreg(String datreg) {
         this.datreg = datreg;
     }
 
@@ -194,11 +193,11 @@ public class DList {
         this.deathPlace = deathPlace;
     }
 
-    public int getPol() {
+    public String getPol() {
         return pol;
     }
 
-    public void setPol(int pol) {
+    public void setPol(String pol) {
         this.pol = pol;
     }
 
