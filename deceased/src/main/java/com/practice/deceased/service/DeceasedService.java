@@ -68,8 +68,8 @@ public class DeceasedService {
             deceasedCitizen.setFamr(worksheet.getCells().get(i, 1).getStringValue());
             deceasedCitizen.setNamer(worksheet.getCells().get(i, 2).getStringValue());
             deceasedCitizen.setOtchr(worksheet.getCells().get(i, 3).getStringValue());
-            deceasedCitizen.setDataro(worksheet.getCells().get(i, 3).getStringValue());
-            deceasedCitizen.setDatar(worksheet.getCells().get(i, 3).getStringValue());
+            deceasedCitizen.setDataro(worksheet.getCells().get(i, 4).getStringValue());
+            deceasedCitizen.setDatar(worksheet.getCells().get(i, 5).getStringValue());
             deceasedCitizen.setCountryh(worksheet.getCells().get(i,6).getStringValue());
             deceasedCitizen.setStated(worksheet.getCells().get(i,7).getStringValue());
             deceasedCitizen.setDepd(worksheet.getCells().get(i,8).getStringValue());
@@ -80,7 +80,7 @@ public class DeceasedService {
             deceasedCitizen.setNumk(worksheet.getCells().get(i,13).getStringValue());
             deceasedCitizen.setNumf(worksheet.getCells().get(i,14).getStringValue());
             deceasedCitizen.setNomakt(worksheet.getCells().get(i,15).getStringValue());
-            deceasedCitizen.setDatreg(worksheet.getCells().get(i,15).getStringValue());
+            deceasedCitizen.setDatreg(worksheet.getCells().get(i,16).getStringValue());
             deceasedCitizen.setBirthPlace(worksheet.getCells().get(i,17).getStringValue());
             deceasedCitizen.setDeathPlace(worksheet.getCells().get(i,18).getStringValue());
             deceasedCitizen.setPol(worksheet.getCells().get(i,19).getStringValue());
