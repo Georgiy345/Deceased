@@ -7,15 +7,19 @@
     <link rel="stylesheet" href="mainpage.css">
 </head>
 <body>
-<h1 class="mt-5">Учет данных об умерших гражданах</h1>
+<h1>Учет данных об умерших гражданах</h1>
 <form id="uploadForm" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="fileInput">Загрузить Excel файл:</label>
+    <div class="form-group file-input-container">
+        <label for="fileInput">Загрузить файл:</label>
         <input type="file" class="form-control-file" id="fileInput" name="file">
     </div>
-    <button type="submit" class="btn btn-primary">Загрузить</button>
+    <div class="button-container">
+        <button type="submit" class="btn btn-primary">Загрузить</button>
+        <button id="addBtn" class="btn btn-primary">Добавить</button>
+    </div>
 </form>
-<table class="table mt-5" id="deceasedTable">
+<div class="content">
+<table class="table mt-1" id="deceasedTable">
     <thead>
     <tr>
         <th>Действия</th>
@@ -24,7 +28,7 @@
         <th>Имя</th>
         <th>Отчество</th>
         <th>Дата рождения</th>
-        <th>Дата смерти</th>
+        <th class="multiline-header">Дата смерти</th>
         <th>Страна адреса места жительства(регистрации)</th>
         <th>Область адреса места жительства(регистрации)</th>
         <th>Район адреса места жительства(регистрации)</th>
@@ -46,7 +50,9 @@
     <tbody id="deceasedTableBody">
     </tbody>
 </table>
-<button id="addBtn" class="btn btn-primary">Добавить</button>
+</div>
+<div class="table-container mt-1">
+</div>
 
 <script>
     let selectedRow = null;
