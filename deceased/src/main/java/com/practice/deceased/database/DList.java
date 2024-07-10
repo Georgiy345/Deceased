@@ -9,7 +9,6 @@ public class DList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "zags_name")
     private String zagsName;
     private String famr;
     private String namer;

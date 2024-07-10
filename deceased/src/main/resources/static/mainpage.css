@@ -4,12 +4,20 @@ body, html {
     display: flex;
     flex-direction: column;
 }
-h1 {
-    margin: 10px;
+.container {
+    max-width: 40%;
+}
+.inputnum{
+    height: 38px;
+    width: 40%;
 }
 .file-input-container {
     display: inline-block;
     width: auto;
+}
+.add-button{
+    max-width: 97px;
+    margin-left: 2px;
 }
 button{
     margin-left: 1px;

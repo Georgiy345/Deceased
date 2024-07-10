@@ -7,17 +7,35 @@
     <link rel="stylesheet" href="mainpage.css">
 </head>
 <body>
-<h1>Учет данных об умерших гражданах</h1>
+<div class="d-flex flex-md-row p-1">
 <form id="uploadForm" enctype="multipart/form-data">
+    <h1>Учет данных об умерших гражданах</h1>
     <div class="form-group file-input-container">
         <label for="fileInput">Загрузить файл:</label>
         <input type="file" class="form-control-file" id="fileInput" name="file">
     </div>
     <div class="button-container">
         <button type="submit" class="btn btn-primary">Загрузить</button>
-        <button id="addBtn" class="btn btn-primary">Добавить</button>
     </div>
+    <button id="addBtn" class="add-button btn btn-primary">Добавить</button>
 </form>
+    <div class="container mt-2">
+        <h2>Фильтр</h2>
+        <div class="form-group">
+            <label for="genderFilter">Пол:</label>
+            <select id="genderFilter" class="form-control">
+                <option value="">Все</option>
+                <option value="1">М</option>
+                <option value="2">Ж</option>
+            </select>
+        </div>
+        <p>Номер актовой записи:</p>
+        <input class="inputnum" type="text" id="actNumberFilter" placeholder="Введите номер">
+        <button class="btn btn-primary" id="filterByActNumberBtn">Отсортировать</button>
+        <button class="btn btn-danger" id="reload">Сброс</button>
+    </div>
+</div>
+
 <div class="content">
 <table class="table mt-1" id="deceasedTable">
     <thead>
@@ -55,7 +73,38 @@
 </div>
 
 <script>
-    let selectedRow = null;
+    document.getElementById('filterByActNumberBtn').addEventListener('click', function() {
+        filterTableByActNumber();
+    });
+
+    document.getElementById('reload').addEventListener('click', function() {
+        document.getElementById('actNumberFilter').value = '';
+        reloadFilter();
+    });
+
+    function reloadFilter(){
+        const rows = document.getElementById('deceasedTableBody').rows;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = '';
+        }
+    }
+
+    function filterTableByActNumber() {
+        const filterValue = document.getElementById('actNumberFilter').value.trim();
+        const rows = document.getElementById('deceasedTableBody').rows;
+
+        for (let i = 0; i < rows.length; i++) {
+            const actNumberCell = rows[i].cells[16];
+            if (actNumberCell) {
+                const actNumber = actNumberCell.textContent.trim();
+                if (filterValue === '' || actNumber.includes(filterValue)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    }
 
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -78,9 +127,11 @@
         addEmptyTableRow();
     });
 
+    document.getElementById('genderFilter').addEventListener('change', filterTable);
+
     function addEmptyTableRow() {
         const tableBody = document.getElementById('deceasedTableBody');
-        const newRow = tableBody.insertRow();
+        const newRow = tableBody.insertRow(0);
         newRow.innerHTML = `<td>
                                 <button class="btn btn-sm btn-success save-btn">Сохранить</button>
                                 <button class="btn btn-sm btn-info edit-btn" style="display: none;">Изменить</button>
@@ -113,22 +164,11 @@
         });
     }
 
-    function loadDeceasedCitizens() {
-        fetch('/api/deceased')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('deceasedTableBody');
-                tableBody.innerHTML = '';
-                data.forEach(deceasedCitizen => {
-                    addTableRow(deceasedCitizen);
-                });
-            });
-    }
-
     function addTableRow(deceasedCitizen) {
         const tableBody = document.getElementById('deceasedTableBody');
         const newRow = tableBody.insertRow();
         newRow.dataset.id = deceasedCitizen.id;
+        newRow.dataset.gender = deceasedCitizen.pol;
         newRow.innerHTML = `<td>
                                 <button class="btn btn-sm btn-info edit-btn">Изменить</button>
                                 <button class="btn btn-sm btn-danger delete-btn">Удалить</button>
@@ -140,14 +180,6 @@
                             <td>${deceasedCitizen.numh}</td><td>${deceasedCitizen.numk}</td><td>${deceasedCitizen.numf}</td>
                             <td>${deceasedCitizen.nomakt}</td><td>${deceasedCitizen.datreg}</td><td>${deceasedCitizen.birthPlace}</td>
                             <td>${deceasedCitizen.deathPlace}</td><td>${deceasedCitizen.pol}</td><td>${deceasedCitizen.citizen}</td><td>${deceasedCitizen.poslmz}</td>`;
-
-        newRow.addEventListener('click', function() {
-            if (selectedRow) {
-                selectedRow.classList.remove('table-active');
-            }
-            selectedRow = this;
-            selectedRow.classList.add('table-active');
-        });
 
         newRow.querySelector('.delete-btn').addEventListener('click', function() {
             deleteDeceasedCitizen(deceasedCitizen.id, newRow);
@@ -169,8 +201,6 @@
     function editDeceasedCitizen(deceasedCitizen, row) {
         row.innerHTML = `<td>
                             <button class="btn btn-sm btn-success save-btn">Сохранить</button>
-                            <button class="btn btn-sm btn-info edit-btn" style="display: none;">Изменить</button>
-                            <button class="btn btn-sm btn-danger delete-btn" style="display: none;">Удалить</button>
                         </td>
                          <td><input type="text" class="form-control" value="${deceasedCitizen.zagsName}"></td>
                          <td><input type="text" class="form-control" value="${deceasedCitizen.famr}"></td>
@@ -309,6 +339,33 @@
                 editDeceasedCitizen(data, row);
             });
         });
+    }
+
+    function filterTable() {
+        const genderFilterValue = document.getElementById('genderFilter').value;
+        const rows = document.querySelectorAll('#deceasedTableBody tr');
+
+        rows.forEach(row => {
+            const gender = row.dataset.gender;
+            if (genderFilterValue == "" || gender == genderFilterValue) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function loadDeceasedCitizens() {
+        fetch('/api/deceased')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('deceasedTableBody');
+                tableBody.innerHTML = '';
+                data.forEach(deceasedCitizen => {
+                    addTableRow(deceasedCitizen);
+                });
+                filterTable();
+            });
     }
 
     window.onload = loadDeceasedCitizens;
